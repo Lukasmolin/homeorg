@@ -1,5 +1,6 @@
 const db = require('../connection');
 const { User } = require('../model');
+const DatabaseError = require('../error/databaseError');
 
 module.exports = class UserRepository {
 
@@ -24,11 +25,17 @@ module.exports = class UserRepository {
     }
 
     async select(user){
-        return new User('nome', 'pass', 3);
+        return await db('users').select
     }
 
     async selectAll(){
-        return await db('users').select('*');
+        try {
+            const user = await db('users').select('id, username');
+            return new User(user);
+        } catch (error) {
+            console.error(error);
+            throw new DatabaseError(error.message)
+        }
     }
 
 }
