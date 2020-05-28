@@ -1,40 +1,77 @@
 const db = require('../connection');
 const { User } = require('../model');
 const DatabaseError = require('../error/databaseError');
+const InvalidParamError = require('../error/invalidParamError');
 
 module.exports = class UserRepository {
 
     constructor(){
-        this.table = 'users';
+        this.getTable = () => db('users');
     }
 
     async insert(user){
-        
-    }
-
-    async delete(user){
-        return new User('nome', 'pass', 3);
+        if(!(user instanceof User)){
+            const err = new InvalidParamError('Param must be instanceof User');
+            console.error(err);
+            throw err;
+        }
+        try {
+            const inserted = await this.getTable().insert(user);
+            return inserted;
+        } catch (error) {
+            console.error(error);
+            return new DatabaseError(error.message);
+        }
     }
 
     async deleteById(id){
-        return new User('nome', 'pass', 3);
+        if(isNaN(id)) throw new InvalidParamError("Id is Not a Number");
+        try {
+            const deleted = await this.getTable().where('id', id).delete().returning('*').first();
+            return new User(deleted);
+        } catch (error) {
+            console.error(error);
+            throw new DatabaseError(error.message);
+        }
     }
 
     async update(user){
-        return new User('nome', 'pass', 3);
+        if(!(user instanceof User)){
+            const err = new InvalidParamError('Param must be instanceof User');
+            console.error(err);
+            throw err;
+        }
+        try {
+            const user = await this.getTable()
+                .where('id', user.id)
+                .update({
+                    username: user.username,
+                    password: user.password
+                 });
+            return user;
+        } catch (error) {
+            console.error(error);
+            throw new DatabaseError(error.message);
+        }
     }
 
     async select(user){
-        return await db('users').select
+        try {
+            const [user] = await this.getTable().where('id', user.id);
+            return user;
+        } catch (error) {
+            console.error(error);
+            throw new DatabaseError(error.message);
+        }
     }
 
     async selectAll(){
         try {
-            const user = await db('users').select('id, username');
-            return new User(user);
+            const users = await this.getTable().select('id', 'username');
+            return users.map(user => new User(user));
         } catch (error) {
             console.error(error);
-            throw new DatabaseError(error.message)
+            throw new DatabaseError(error.message);
         }
     }
 

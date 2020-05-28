@@ -10,7 +10,8 @@ module.exports = {
             return res.json(json);
         } catch (error) {
             const json = jsonfy(error);
-            return res.status(500).json(json);
+            const status = error.status || 500;
+            return res.status(status).json(json);
         }
     },
     async info(req, res){
