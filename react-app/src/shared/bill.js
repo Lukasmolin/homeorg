@@ -1,3 +1,7 @@
+/**
+ * represents a single Bill
+ * @typedef {Object} Bill
+ */
 class Bill {
 
     constructor(bill) {

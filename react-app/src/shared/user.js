@@ -1,5 +1,15 @@
+/**
+ * Represents an User
+ * @typedef {Object} User
+ */
 class User {
-    constructor(user, password, id ){
+    /**
+     * 
+     * @param {(String | User)} user either user name or the full user object 
+     * @param {String} [password] user password
+     * @param {Number} [id] user id
+     */
+    constructor(user, password, id){
         this.id;
         this.username;
         this.password;

@@ -1,3 +1,7 @@
+/**
+ * Represents a single Debt
+ * @typedef {Object} Debt
+ */
 class Debt {
 
     constructor(debt){
