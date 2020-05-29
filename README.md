@@ -41,5 +41,6 @@ This project (tries very hard to) follow [JSON API](https://jsonapi.org/) conven
 # To-Do
 - [ ] Add react-app and node-api services to Docker Compose
 - [ ] Generate JSDocs documentation
+- [ ] Add JWT
 
 
