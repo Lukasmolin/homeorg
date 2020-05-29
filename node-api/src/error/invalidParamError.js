@@ -7,3 +7,5 @@ class InvalidParamError extends Error {
     }
 
 }
+
+module.exports = InvalidParamError;
