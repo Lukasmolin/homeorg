@@ -3,14 +3,13 @@ function isString(object){
 }
 
 function isFilledString(object){
-    if(object instanceof String){
-        if(object.trim().length > 0)
-            return true;
-    } else if (typeof object === 'string') {
-        if(object != 0)
-            return true;
-    }
-    return false;
+    if(object instanceof String && object.trim().length > 0)
+        return true;
+    
+    if (typeof object === 'string' && object != 0)
+        return true;
+
+    return false
 }
 
 module.exports = {
