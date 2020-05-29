@@ -2,7 +2,7 @@ const UserService = require('../service/userService');
 const jsonfy = require('../util/json/jsonApiProcessor');
 const BadRequestError = require('../error/BadRequestError');
 const { User } = require('../model');
-const { isString } = require('../util/typeChecks/typeCheck');
+const { isFilledString } = require('../util/typeChecks/typeCheck');
 
 const userService = new UserService();
 
@@ -38,8 +38,8 @@ module.exports = {
             return handleError(new BadRequestError('No data prop inside payload'), res);
 
         const { username, password } = req.body.data;
-        if(!username || !password || !isString(username) || !isString(username))
-            return handleError(new BadRequestError('Data must contain valid string username and password'), res);
+        if(!username || !password || !isFilledString(username) || !isFilledString(username))
+            return handleError(new BadRequestError('Data must contain valid non-empty string username and password'), res);
 
         try {
             
