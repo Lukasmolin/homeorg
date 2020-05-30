@@ -5,6 +5,7 @@
 class Bill {
 
     constructor(bill) {
+        this.modelClass = "Bill";
         this.id = bill ? bill.id : undefined;
         this.owner = bill ? bill.owner : undefined;
         this.value = bill ? bill.value : undefined;

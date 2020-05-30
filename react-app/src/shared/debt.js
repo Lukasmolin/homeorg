@@ -5,6 +5,7 @@
 class Debt {
 
     constructor(debt){
+        this.modelClass = "Debt";
         this.id = debt ? debt.id : undefined;
         this.bill = debt ? debt.bill : undefined;
         this.debtor = debt ? debt.user : undefined;

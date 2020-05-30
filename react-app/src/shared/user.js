@@ -4,12 +4,12 @@
  */
 class User {
     /**
-     * 
      * @param {(String | User)} user either user name or the full user object 
      * @param {String} [password] user password
      * @param {Number} [id] user id
      */
     constructor(user, password, id){
+        this.modelClass = "User";
         this.id;
         this.username;
         this.password;
