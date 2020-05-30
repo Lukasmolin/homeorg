@@ -1,6 +1,7 @@
 const UserRepository = require('../repository/userRepository');
 const InvalidParamError = require('../error/invalidParamError');
 const { User } = require('../model');
+const { isString, isFilledString } = require('../util/typeChecks/typeCheck');
 
 module.exports = class UserService {
 
@@ -19,49 +20,52 @@ module.exports = class UserService {
     
     /**
      * Creates new user
-     * @param {User|String} newUser string with username is expected if second parameter is passed, otherwise {User}
-     * with username and password expected
-     * @param {String} [password] user password
+     * @param {User} newUser
      */
-    async create(newUser, password){
-        let user;
-        if(typeof newUser === 'string' || newUser instanceof String){
-            
-        }
-
-        if(!(newUser instanceof User)) throw new InvalidParamError("Param: NewUser Must be instanceof User");
+    async create(newUser){
+        if(!(newUser instanceof User))
+            throw new InvalidParamError('New user must be instance of User')
 
         const resp = await this.repo.insert(newUser);
         return resp;
     }
 
     /**
-     * @param {(Number|User|String)} id Either a instanceOf User with a valid id prop or the id itself
+     * @param {User} user with valid id or username, id is used if both present
      * @returns {Promise<User>} selected user
-     * @throws {InvalidParamError} if negative number or invalid {id} type 
+     * @throws {InvalidParamError} if not instance of User or invalid id 
      */
-    async get(id){
-        if(isNaN(id) && !(id instanceof User))
-            throw new InvalidParamError('Param: id is neither a number nor instanceof User.');
+    async get(user){
+        if(!(user instanceof User))
+            throw new InvalidParamError('user must be instance of User')
 
-        if(id <= 0)
-            throw new InvalidParamError('Param: id must be a positive number');
-
-        const userId = isNaN(id) ? user.id : parseInt(id);
-        const resp = await this.repo.select(userId);
+        const resp = await this.repo.select(user);
         return resp;
     }
 
+    /**
+     * Edits User with a given id acording to its proprieties
+     * @param {User} user with existing id and new username and/or new password
+     * @returns {Promise<User>} after edited with id and username populated
+     */
     async edit(user){
-        if(!(user instanceof User)) throw new InvalidParamError('')
-
-        const { id } = user;
-        if(isNaN(id) || id <= 0) throw new InvalidParamError('')
+        if(!(user instanceof User))
+            throw new InvalidParamError('user must be instance of User');
         
+        const resp = await this.repo.update(user);
+        return resp;
     }
 
-    async delete(id){
-        
+    /**
+     * @param {User} user with id or username to be deleted, id is used if both present
+     * @returns {Promise<User>} with id and username populated
+     */
+    async delete(user){
+        if(!(user instanceof User))
+            throw new InvalidParamError('user must be instance of user');
+
+        const resp = await this.repo.delete(user);
+        return resp;
     }
 
 }
