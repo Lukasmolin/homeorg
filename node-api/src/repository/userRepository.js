@@ -6,8 +6,8 @@ const InvalidParamError = require('../error/invalidParamError');
 
 module.exports = class UserRepository {
 
-    constructor(){
-        this.getTable = () => db('users');
+    constructor() {
+        this.db = () => db('users');
     }
 
     /**
@@ -16,19 +16,19 @@ module.exports = class UserRepository {
      * @throws {InvalidParamError} if not instance of User
      * @throws {DatabaseError} if database acess throw any error
      */
-    async insert(user){
-        if(!(user instanceof User))
+    async insert(user) {
+        if (!(user instanceof User))
             throw new InvalidParamError('Param must be instanceof User');
 
         const { username, password } = user;
-        if(!isFilledString(username) || !isFilledString(password))
+        if (!isFilledString(username) || !isFilledString(password))
             throw new InvalidParamError('Username and Password must be valid strings')
 
         try {
-            const [inserted] = await this.getTable()
+            const [inserted] = await this.db()
                 .insert({ username, password })
                 .returning(['id', 'username']);
-            
+
             return new User(inserted);
         } catch (error) {
             throw new DatabaseError(error.message);
@@ -41,21 +41,21 @@ module.exports = class UserRepository {
      * @throws {InvalidParamError} if user not instance of User or user.id is not valid
      * @throws {DatabaseError} if database acess throw any error
      */
-    async delete(user){
-        if(!(user instanceof User))
+    async delete(user) {
+        if (!(user instanceof User))
             throw new InvalidParamError('user must be instance of User');
 
         const { id, username } = user;
         const isValidId = !isNaN(id) && id > 0;
         const isValidName = isFilledString(username);
-        if(!isValidId && !isValidName)
+        if (!isValidId && !isValidName)
             throw new InvalidParamError('User doesnt have a valid neither id nor username');
 
         const propName = isValidId ? 'id' : 'username';
         const content = isValidId ? parseInt(id) : username;
 
         try {
-            const [deleted] = await this.getTable().where(propName, content).delete().returning(['id', 'username']);
+            const [deleted] = await this.db().where(propName, content).delete().returning(['id', 'username']);
             return new User(deleted);
         } catch (error) {
             throw new DatabaseError(error.message);
@@ -67,31 +67,31 @@ module.exports = class UserRepository {
      * @returns {Promise<User>} with id and username populated 
      * @throws {DatabaseError} if database acess throw any error
      */
-    async update(user){
-        if(!(user instanceof User))
+    async update(user) {
+        if (!(user instanceof User))
             throw new InvalidParamError('Param must be instanceof User');
 
-        if(isNaN(user.id))
+        if (isNaN(user.id))
             throw new InvalidParamError('user.id must be a valid number!');
 
         const { username, password } = user;
         const isValidName = isFilledString(username);
         const isValidPass = isFilledString(password);
-        if(!isValidName && !isValidPass)
+        if (!isValidName && !isValidPass)
             throw new InvalidParamError('User username and password must be valid strings');
 
         const propsToAdd = {};
-        if(isValidPass)
+        if (isValidPass)
             propsToAdd.password = password;
-        
-        if(isValidName)
+
+        if (isValidName)
             propsToAdd.username = username;
 
         try {
-            const user = await this.getTable()
+            const user = await this.db()
                 .where('id', user.id)
                 .update(propsToAdd)
-                .returning([ 'id', 'username' ]);
+                .returning(['id', 'username']);
             return new User(user);
         } catch (error) {
             throw new DatabaseError(error.message);
@@ -104,42 +104,40 @@ module.exports = class UserRepository {
      * @returns {Promise<User>} specified user
      * @throws {DatabaseError} if database acess throw any error
      */
-    async select(user){
-        if(!(user instanceof User))
+    async select(user) {
+        if (!(user instanceof User))
             throw new InvalidParamError('user must be instanceof User');
 
         const { id, username } = user;
         const isValidId = !isNaN(id) && id > 0;
         const isValidName = isFilledString(username);
-        if(!isValidId && !isValidName)
+        if (!isValidId && !isValidName)
             throw new DatabaseError('Neither id nor username are valid!');
 
         const propName = isValidId ? 'id' : 'username';
         const content = isValidId ? parseInt(id) : username;
 
-        let selected;
         try {
-            [selected] = await this.getTable().where(propName, content);           
+            const [selected] = await this.db().where(propName, content);
+            if(selected){
+                return new User({
+                    id: selected.id,
+                    username: selected.username
+                });
+            }
         } catch (error) {
             throw new DatabaseError(error);
         }
-
-        if(!selected)
-            throw new DatabaseError(`user ${propName} not found.`, 404);
-
-        return new User({
-            username: user.username,
-            id: user.id
-        });
+        throw new DatabaseError(`user ${propName} not found.`, 404);
     }
 
     /**
      * @returns {Promise<User[]>} All users with ids and names populated
      * @throws {DatabaseError} if database acess throw any error
      */
-    async selectAll(){
+    async selectAll() {
         try {
-            const users = await this.getTable().select('id', 'username');
+            const users = await this.db().select('id', 'username');
             return users.map(user => new User(user));
         } catch (error) {
             throw new DatabaseError(error.message);
