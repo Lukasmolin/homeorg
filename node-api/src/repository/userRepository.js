@@ -29,10 +29,12 @@ module.exports = class UserRepository {
                 .insert({ username, password })
                 .returning(['id', 'username']);
 
-            return new User(inserted);
+            if(inserted)    
+                return new User(inserted);
         } catch (error) {
             throw new DatabaseError(error.message);
         }
+        throw new DatabaseError('Username already exists', 403);
     }
 
     /**
@@ -56,10 +58,13 @@ module.exports = class UserRepository {
 
         try {
             const [deleted] = await this.db().where(propName, content).delete().returning(['id', 'username']);
-            return new User(deleted);
+
+            if(deleted)
+                return new User(deleted);
         } catch (error) {
             throw new DatabaseError(error.message);
         }
+        throw new DatabaseError('user id not found', 404);
     }
 
     /**
@@ -88,14 +93,17 @@ module.exports = class UserRepository {
             propsToAdd.username = username;
 
         try {
-            const user = await this.db()
+            const [updatedUser] = await this.db()
                 .where('id', user.id)
                 .update(propsToAdd)
                 .returning(['id', 'username']);
-            return new User(user);
+            
+            if(updatedUser)
+                return new User(updatedUser);
         } catch (error) {
             throw new DatabaseError(error.message);
         }
+        throw new DatabaseError('user id not found.', 404);
     }
 
     /**

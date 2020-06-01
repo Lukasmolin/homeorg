@@ -78,17 +78,11 @@ module.exports = {
     },
     async delete(req, res){
         const { id } = req.params;
-        const { username } = req.body.data;
         const isValidId = !isNaN(id) && id > 0;
-        if(!isValidId && !username)
-            return handleError(new BadRequestError('Must have valid id or username'));
+        if(!isValidId)
+            return handleError(new BadRequestError('Must have valid id'));
 
-        const user = new User();
-        if(isValidId)
-            user.id = isValidId;
-        if(username)
-            user.username = username;
-
+        const user = new User({id});
         try {
             const resp = await userService.delete(user);
             const json = jsonfy(resp);
