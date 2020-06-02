@@ -80,7 +80,7 @@ module.exports = {
         const { id } = req.params;
         const isValidId = !isNaN(id) && id > 0;
         if(!isValidId)
-            return handleError(new BadRequestError('Must have valid id'));
+            return handleError(new BadRequestError('Must have valid id'), res);
 
         const user = new User({id});
         try {
