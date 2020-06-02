@@ -7,6 +7,7 @@ exports.up = function(knex) {
     table.integer('value').unsigned().notNullable();
 
     table.foreign('owner_bill').references('bill_id').inTable('bills');
+    table.foreign('debtor_user').references('id').inTable('users');
   });
 };
 
