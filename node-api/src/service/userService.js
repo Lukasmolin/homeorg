@@ -37,7 +37,7 @@ module.exports = class UserService {
      */
     async get(user){
         if(!(user instanceof User))
-            throw new InvalidParamError('user must be instance of User')
+            throw new InvalidParamError('user must be instance of User');
 
         const resp = await this.repo.select(user);
         return resp;

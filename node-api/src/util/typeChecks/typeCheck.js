@@ -12,6 +12,10 @@ function isFilledString(object){
     return false
 }
 
+function isValidId(object) {
+    return !isNaN(object) && object > 0;
+}
+
 module.exports = {
-    isString, isFilledString
+    isString, isFilledString, isValidId
 };
