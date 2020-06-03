@@ -140,6 +140,23 @@ module.exports = class UserRepository {
     }
 
     /**
+     * @param {User[]} users with id or username to find
+     * @returns {Promise<User[]>} all found users with id and username 
+     */
+    async selectAllWhereId(users){
+        if(users.some(user => !(user instanceof User)))
+            throw new InvalidParamError('All users must be instance of User');
+        
+        try {
+            const selected = await this.db().whereIn(users).select('id', 'username');
+            const selectedUsers = selected.map(user => new User(user));
+            return selectedUsers;
+        } catch (error) {
+            throw new DatabaseError(error);
+        }
+    }
+
+    /**
      * @returns {Promise<User[]>} All users with ids and names populated
      * @throws {DatabaseError} if database acess throw any error
      */

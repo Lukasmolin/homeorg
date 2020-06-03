@@ -16,24 +16,13 @@ module.exports = class DebtRepository {
      * @param {Debt} debt new debt to be inserted
      * @returns {Promise<Debt>} inserted Debt
      * @throws {InvalidParamError} if debt not instance of Debt
-     * @throws {InvalidParamError} if debt.value is not an positive integer
-     * @throws {InvalidParamError} if debt.billId is not an positive integer
-     * @throws {InvalidParamError} if debt.debtor.id is not an positive integer
      * @throws {DatabaseError} if database acess throws any error
      */
     async insert(debt) {
         if (!(debt instanceof Debt))
             throw new InvalidParamError('Param debt must be instance of Debt');
 
-        const { value, billId, debtor } = debt;
-        if (isNaN(value) || value <= 0)
-            throw new InvalidParamError('Param debt.value must be positive integer');
-
-        if (isNaN(billId) || billId <= 0)
-            throw new InvalidParamError('Param debt.billId must be a positive integer');
-
-        if(isNaN(debtor.id) || debtor.id <= 0)
-            throw new InvalidParamError('param debt.debtor.id must be a positive integer');
+        const { value, billId, debtor } = debt;        
 
         const toInsert = {
             owner_bill: billId,
@@ -49,6 +38,41 @@ module.exports = class DebtRepository {
                 value: inserted.value,
                 debtor: debtor
             });
+        } catch (error) {
+            throw new DatabaseError(error);
+        }
+    }
+
+    /**
+     * @param {Debt[]} debts all debts to insert
+     * @returns {Promise<Debt[]>} all inserted
+     * @throws {InvalidParamError} if debt not instance of Debt
+     * @throws {DatabaseError} if database acess throws any error
+     */
+    async insertAll(debts){
+        if(debts.some(debt => !(debt instanceof Debt)))
+            throw new InvalidParamError('all elements from debts must be instanceof Debt');
+        
+        const toInsert = debts.map(debt => {
+            const { billId, debtor, value } = debt;
+            return {
+                owner_bill: billId,
+                debtor_user: debtor.id,
+                value: value
+            };
+        });
+
+        try {
+            const inserted = await this.debtsDB().insert(toInsert).returning('*').join();
+            const insertedDebts = inserted.map(debt => {
+                return new Debt({
+                    id: debt.debt_id,
+                    billId: debt.owner_bill,
+                    value: debt.value,
+                    debtor: debtor
+                });
+            });
+            return insertedDebts;
         } catch (error) {
             throw new DatabaseError(error);
         }
