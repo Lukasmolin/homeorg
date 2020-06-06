@@ -1,3 +1,5 @@
+const jsonfy = require('../util/json/jsonApiProcessor');
+
 module.exports = function (error, res) {
     console.error(error);
     const json = jsonfy(error);
