@@ -28,12 +28,17 @@ Since this projects share code files between them, create-react-app doesn't let 
 [./node-api/src/model.js](https://github.com/Lukasmolin/homeorg/blob/master/node-api/src/model.js) - imports from shared folder
 
 ### Project
-./
-    Docker
-    /node-api/
-        (All Api files, Modules and depedencies)
-    /react-app/
-        (All App Files, Modules and depedencies)
+
+    homeorg/
+
+        (docker-compose files)
+
+        /node-api/    
+            (All Web Api files, Modules and depedencies)
+
+        /react-app/    
+            (All React App Files, Modules and depedencies)
+        
 
 # Guidelines
 This project (tries very hard to) follow [JSON API](https://jsonapi.org/) conventions.
