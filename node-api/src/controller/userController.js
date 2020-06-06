@@ -6,13 +6,6 @@ const { isFilledString } = require('../util/typeChecks/typeCheck');
 
 const userService = new UserService();
 
-function handleError(error, res){
-    console.error(error);
-    const json = jsonfy(error);
-    const status = error.status || 500;
-    res.status(status).json(json);
-}
-
 module.exports = {
     async index(req, res){
         try {
