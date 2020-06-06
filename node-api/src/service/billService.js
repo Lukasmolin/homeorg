@@ -1,4 +1,4 @@
-const BillRepository = require('../repository/userRepository');
+const BillRepository = require('../repository/billRepository');
 
 module.exports = class BillService {
 
