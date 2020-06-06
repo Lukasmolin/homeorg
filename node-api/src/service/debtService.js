@@ -1,5 +1,5 @@
 const DebtRepository = require('../repository/debtRepository');
-const { Debt } = require('../model');
+const { Debt, User } = require('../model');
 
 module.exports = class DebtService {
 
@@ -10,21 +10,29 @@ module.exports = class DebtService {
     /**
      * Parses JSON to Debt
      * @param {Object} debt JSON object to parse
-     * @param {Boolean} [deep=false] if should fill contained entities
+     * @param {Boolean} [deep=false] if should recursively fill contained entities
      * @returns {Debt} new Debt
      */
     parse(debt, deep = false) {
-        
+        const shouldCreateUser = deep && debt.debtor.id;
+        const toParse = {
+            id: debt.id,
+            billId: debt.billId,
+            value: debt.value,
+            debtor: shouldCreateUser ? new User(debt.debtor) : { ...debt.debtor }
+        };
+        return new Debt(toParse);
     }
 
     /**
      * Parses JSON array to Debt array
      * @param {Object[]} debt array of JSON objects to parse
-     * @param {Boolean} [deep=false] if should fill contained entities
+     * @param {Boolean} [deep=false] if should recursively fill contained entities
      * @returns {Debt[]} parsed new debts
      */
     parseAll(debts, deep = false) {
-
+        const all = debts.map( debt => this.parse(debt, deep) );
+        return all;
     }
 
     /**
