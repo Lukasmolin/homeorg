@@ -4,6 +4,12 @@ const { isFilledString } = require('../util/typeChecks/typeCheck');
 const DatabaseError = require('../error/databaseError');
 const InvalidParamError = require('../error/invalidParamError');
 
+/**
+ * @typedef {Object} UserRepository
+ * @description Repository class for User entity. Repository functions must only receive and/or return
+ * instances of entities classes
+ * @see {User} for more info
+ */
 module.exports = class UserRepository {
 
     constructor() {
