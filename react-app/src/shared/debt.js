@@ -8,7 +8,7 @@ class Debt {
         this.modelClass = "Debt";
         this.id = debt ? debt.id : undefined;
         this.billId = debt ? debt.bill : undefined;
-        this.debtor = debt ? debt.user : undefined;
+        this.debtor = debt ? debt.debtor : undefined;
         this.value = debt ? debt.value : undefined;
     }
 
