@@ -29,11 +29,15 @@ Since this projects share code files between them, create-react-app doesn't let 
 
 ### Project
 ./
-    Docker
-    /node-api/
-        (All Api files, Modules and depedencies)
-    /react-app/
-        (All App Files, Modules and depedencies)
+
+    (docker-compose files)
+    
+    /node-api/    
+        (All Web Api files, Modules and depedencies)
+        
+    /react-app/    
+        (All React App Files, Modules and depedencies)
+        
 
 # Guidelines
 This project (tries very hard to) follow [JSON API](https://jsonapi.org/) conventions.
