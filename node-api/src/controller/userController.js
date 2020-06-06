@@ -1,5 +1,6 @@
 const UserService = require('../service/userService');
 const BadRequestError = require('../error/BadRequestError');
+const jsonfy = require('../util/json/jsonApiProcessor')
 const { User } = require('../model');
 const { isFilledString } = require('../util/typeChecks/typeCheck');
 

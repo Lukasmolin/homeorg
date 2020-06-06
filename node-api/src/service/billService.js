@@ -6,7 +6,7 @@ module.exports = class BillService {
 
     constructor(){
         this.repo = new BillRepository();
-        this.debtService = DebtService();
+        this.debtService = new DebtService();
     }
 
     /**
