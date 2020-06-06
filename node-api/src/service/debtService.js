@@ -1,4 +1,5 @@
 const DebtRepository = require('../repository/debtRepository');
+const { Debt } = require('../model');
 
 module.exports = class DebtService {
 
@@ -6,6 +7,25 @@ module.exports = class DebtService {
         this.repo = new DebtRepository();
     }
 
+    /**
+     * Parses JSON to Debt
+     * @param {Object} debt JSON object to parse
+     * @param {Boolean} [deep=false] if should fill contained entities
+     * @returns {Debt} new Debt
+     */
+    parse(debt, deep = false) {
+        
+    }
+
+    /**
+     * Parses JSON array to Debt array
+     * @param {Object[]} debt array of JSON objects to parse
+     * @param {Boolean} [deep=false] if should fill contained entities
+     * @returns {Debt[]} parsed new debts
+     */
+    parseAll(debts, deep = false) {
+
+    }
 
     /**
      * @param {Debt} debt
