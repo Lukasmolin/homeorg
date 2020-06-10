@@ -1,5 +1,6 @@
 const BillRepository = require('../repository/billRepository');
 const DebtService = require('../service/debtService');
+const InvalidParamError = require('../error/invalidParamError');
 const { Bill } = require('../model');
 
 module.exports = class BillService {
@@ -10,13 +11,19 @@ module.exports = class BillService {
     }
 
     /**
-     * parse json to Bill
+     * Parses JSON to Bill
      * @param {Object} bills JSON bill
-     * @param {Boolean} [deep=false] if should recursively populate contained entities (User, Debts[]), defaults to false
+     * @param {Boolean} [deep = false] if should recursively populate contained entities (User, Debts[]), defaults to false
      * @returns {Bill} New Bill
      */
     parse(bill, deep = false) {
         const shouldBuildOwner = deep && (bill.owner.id || bill.owner.username);
+        if(deep && shouldBuildOwner)
+            throw new InvalidParamError('Invalid Owner');
+
+        if(!bill.debts || Array.isArray(bill.debts))
+            throw new InvalidParamError('Invalid debts');
+
         const parsedDebts = deep ? this.debtService.parseAll(bill.debts, deep) : bill.debts;
         const toParse = {
             id: bill.id,
@@ -24,7 +31,7 @@ module.exports = class BillService {
             value: bill.value,
             date: bill.date,
             description: bill.description,
-            debts: parsedDebts 
+            debts: parsedDebts
         };
         return new Bill(toParse);
     }

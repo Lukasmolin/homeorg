@@ -15,13 +15,13 @@ module.exports = class DebtService {
      */
     parse(debt, deep = false) {
         const shouldCreateUser = deep && debt.debtor.id;
-        const toParse = {
+        const parsed = {
             id: debt.id,
             billId: debt.billId,
             value: debt.value,
             debtor: shouldCreateUser ? new User(debt.debtor) : { ...debt.debtor }
         };
-        return new Debt(toParse);
+        return new Debt(parsed);
     }
 
     /**

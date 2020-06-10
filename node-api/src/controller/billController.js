@@ -12,13 +12,15 @@ const billService = new BillService();
 
 module.exports = {
     async create(req, res) {
-        if (!req.body.data)
+        const { body, headers, params } = req;
+
+        if (!body.data)
             return handleError(new BadRequestError('No data prop inside body'), res);
 
-        if (!req.headers.user_id)
-            return handleError(new BadRequestError('No data pro inside body'), res);
+        if (!params.id && (!body.data.owner || !body.data.owner.id))
+            return handleError(new BadRequestError('No owner id inside path nor data owner'), res);
 
-        const userId = new User({ id: req.headers.user_id });
+        const userId = new User({ id: params.id });
         let user;
         try {
             const resp = await userService.get(userId);
@@ -30,7 +32,7 @@ module.exports = {
         if (!user)
             return handleError(new Error('Unknown server error'), res);
 
-        const { data } = req.body;
+        const { data } = body;
         try {
             const toCreate = billService.parse(data, true);
             const resp = billService.save(toCreate);
